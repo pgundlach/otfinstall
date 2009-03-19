@@ -27,6 +27,11 @@ end
 oinstfile=ARGV[0].chomp('.oinst') + '.oinst'
 
 begin
+  ret = `otfinfo --help 2>&1`
+  unless $?.success?
+    puts "Command `otfinfo' not found. Did you install lcdf type tools?"
+    exit(-1)
+  end
   o.read_otfinstr(ARGV[0])
 rescue Errno::ENOENT => e
   puts "Error: Cannot find the file #{oinstfile}"

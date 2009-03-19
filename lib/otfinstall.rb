@@ -165,9 +165,11 @@ class OTFInstall
         raise "not implemented variant"
       end
     end
+    col = (@fontclass == "serif" ? "rm" : "ss")
+
     @typescript[:name] << " \\definefontsynonym  [#{@fontclass.capitalize}Regular]       [#{@fontclass.capitalize}]"
     @typescript[:map] = [" \\loadmapfile [#{@collection}.map]"]
-    @typescript[:font] = ["\\definetypeface [#{@collection}][rm][#{@fontclass}] [#{@collection}][default][encoding=texnansi]"]
+    @typescript[:font] = ["\\definetypeface [#{@collection}][#{col}][#{@fontclass}] [#{@collection}][default][encoding=texnansi]"]
 
     File.open(dir(:map),"w") do |f|
       f << @maplines.join("\n")
@@ -182,13 +184,14 @@ class OTFInstall
   
   private
   def write_sample
+    col = (@fontclass == "serif" ? "rm" : "ss")
     tmp=""
     tmp << "\\preloadtypescripts\n"
     tmp << "\\setupencoding[default=texnansi]\n"
     tmp << "\\usetypescriptfile[type-#{@collection}]\n"
     tmp << "\\usetypescript[#{@collection}]\n"
 
-    tmp << "\\definetypeface [sample][rm][serif][#{@collection}][default][encoding=texnansi]\n"
+    tmp << "\\definetypeface [sample][#{col}][#{@fontclass}][#{@collection}][default][encoding=texnansi]\n"
 
     tmp << "\\definebodyfontenvironment [#{@collection}][14pt][interlinespace=20pt]\n"
     tmp << "\\setupbodyfont[sample,#{@fontclass},14pt]\n"
@@ -197,6 +200,14 @@ class OTFInstall
     tmp << "\\setuptolerance [tolerant]\n" 
     tmp << "\\starttext\n"
     tmp << "\\input tufte\n"
+    tmp << "123456789\n\n"
+    tmp << "{\\Var[osf] 123456789}\n\n"
+    tmp << "hello---good morning.\n\n"
+    tmp << "between the 4--5.\n\n"
+    tmp << "is it type-safe.    {\\sc it is type-safe}\n\n"
+    tmp << "{is it type-safe.}  {\\bf sc it is type-safe}\n\n"
+    tmp << "{is it type-safe.}  {\\it it is type-safe}\n\n"
+    tmp << "{is it type-safe.}  {\\bi it is type-safe}\n\n"
     tmp << "\\stoptext\n"
   end
   

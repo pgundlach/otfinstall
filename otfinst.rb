@@ -6,14 +6,16 @@ require "lib/otfinstall"
 
 o=OTFInstall.new
 o.basedir=Dir.pwd + "/texmf"
+o.fontbase=Dir.pwd
 
 
 ARGV.options do |opt|
+  opt.summary_width = 20
   opt.banner = "Usage: otfinst <fontdescription.oinst>"
-  opt.on('-b DIR','--basedir', 'Set basedir where texmf is located. Default', 'is the current directory') do |d|
+  opt.on('-b DIR','--basedir', 'Set base directory where texmf is located. Default', 'is the current directory') do |d|
     o.basedir=d
   end
-  opt.on('-f DIR','--fontbase', 'Set basedirectory for otf-fonts. If set, it', 'will look in vendor/collection for the fontfiles') do |d|
+  opt.on('-f DIR','--fontbase', 'Set base directory for otf-fonts. If set, it', 'will look in vendor/collection for the fontfiles') do |d|
     o.fontbase=d
   end
   opt.parse!
@@ -32,7 +34,7 @@ begin
     puts "Command `otfinfo' not found. Did you install lcdf type tools?"
     exit(-1)
   end
-  o.read_otfinstr(ARGV[0])
+  o.read_otfinstr(oinstfile)
 rescue Errno::ENOENT => e
   puts "Error: Cannot find the file #{oinstfile}"
   exit(-1)

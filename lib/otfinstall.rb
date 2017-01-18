@@ -1,4 +1,4 @@
-require "lib/helper"
+require "helper"
 
 require "delegate"
 require "fileutils"
@@ -58,7 +58,7 @@ class OTFInstall
     @basedir = nil
     @fontbase = nil
 
-    @ltxname = { 
+    @ltxname = {
       "t1" => "T1",
       "ts1" => "TS1",
       "lgr" => "LGR",
@@ -134,18 +134,18 @@ class OTFInstall
 
   def read_otfinstr(path)
     @otfinstr=OInst.load(path)
-    
+
     # set some default values
     set_default_value("collection", "otfinstall")
     set_default_value("vendor",     "otfinstall")
     set_default_value("variants",  ["default"]  )
     set_default_value("encodings", ["t1"]       )
     set_default_value("style",      "serif"     )
-    
+
     fontdir = @fontbase ? File.join(@fontbase,vendor,collection) : ""
 
     iv = @otfinstr.instance_variables
-    
+
     @collection = @otfinstr.instance_variable_get(iv.delete("@collection"))
     @vendor     = @otfinstr.instance_variable_get(iv.delete("@vendor"))
     @encodings  = @otfinstr.instance_variable_get(iv.delete("@encodings"))
@@ -215,7 +215,7 @@ class OTFInstall
     fd = []
     fd << "\\ProvidesFile{#{filename}}"
     fd << "\\DeclareFontFamily{#{@ltxname[encoding]}}{#{@collection}}{}"
-    
+
     weight_widths = Family.new
     weight_widths << Member.new(:m,nil)
     weight_widths << Member.new(:l,:m)
@@ -256,7 +256,7 @@ class OTFInstall
         fd << "\\DeclareFontShape{#{@ltxname[encoding]}}{#{@collection}}{#{weight_width}}{#{shape}}{  <-> #{fontshapes["#{weight_width}/#{shape}"]}}{}"
       end
     end
-    
+
     fd << "% fd file ends here"
     fd << ""
 
@@ -272,6 +272,7 @@ class OTFInstall
     end
     args << "-fliga"
     args << "-fkern"
+    args << "-fonum"
     cmdline = "otftotfm #{args.join(" ")} 2> otfinstall.log"
     puts cmdline
     mapline = `#{cmdline}`.chomp
@@ -281,7 +282,7 @@ class OTFInstall
 
   def get_tex_name(mapline)
     # the tex relevant name is the first part in the mapline
-    mapline.split[0].chomp('--base')
+    mapline.split[0].chomp('--base') if mapline[0]
   end
 
 end

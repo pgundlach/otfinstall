@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 
 require "optparse"
-require "lib/otfinstall"
+
+$:.unshift File.join(File.dirname(__FILE__),'lib')
+require "otfinstall"
 
 
 o=OTFInstall.new
@@ -23,19 +25,19 @@ end
 
 unless ARGV.size == 1
   puts "Error: otfinst needs exactly one argument. See otfinst -h for help."
-  exit -1
+  exit(-1)
 end
 
 oinstfile=ARGV[0].chomp('.oinst') + '.oinst'
 
 begin
-  ret = `otfinfo --help 2>&1`
+  `otfinfo --help 2>&1`
   unless $?.success?
     puts "Command `otfinfo' not found. Did you install lcdf type tools?"
     exit(-1)
   end
   o.read_otfinstr(oinstfile)
-rescue Errno::ENOENT => e
+rescue Errno::ENOENT
   puts "Error: Cannot find the file #{oinstfile}"
   exit(-1)
 end
